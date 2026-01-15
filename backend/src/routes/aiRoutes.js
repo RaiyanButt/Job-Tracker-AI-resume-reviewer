@@ -1,11 +1,11 @@
 import { Router } from "express";
-
+import requireAuth from "../middleware/requireAuth.js";
 
 const router = Router();
 
 const clamp = (s = "", n = 8000) => (s || "").toString().slice(0, n).trim();
 
-router.post("/review", async (req, res) => {
+router.post("/review", requireAuth, async (req, res) => {
   try {
     const resume = clamp(req.body?.resume, 8000);
     const job = clamp(req.body?.job, 6000);
@@ -51,10 +51,10 @@ router.post("/review", async (req, res) => {
     const data = await resp.json();
 
     const text =
-      data?.output?.[0]?.content?.[0]?.text || 
-      data?.output_text ||                     
-      data?.content?.[0]?.text ||               
-      data?.choices?.[0]?.message?.content ||  
+      data?.output?.[0]?.content?.[0]?.text ||
+      data?.output_text ||
+      data?.content?.[0]?.text ||
+      data?.choices?.[0]?.message?.content ||
       "No content";
 
     return res.json({ text });

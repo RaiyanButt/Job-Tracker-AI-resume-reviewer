@@ -1,3 +1,4 @@
+
 import express from "express";
 import {
   createJob,
@@ -6,8 +7,11 @@ import {
   getJobById,
   updateJob,
 } from "../controllers/jobsController.js";
+import requireAuth from "../middleware/requireAuth.js";
 
 const router = express.Router();
+
+router.use(requireAuth);
 
 router.get("/", getAllJobs);
 router.get("/:id", getJobById);

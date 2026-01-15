@@ -1,6 +1,5 @@
 import Job from "../models/Job.js";
 
-
 export async function getAllJobs(req, res) {
   try {
     const {
@@ -13,7 +12,7 @@ export async function getAllJobs(req, res) {
       limit = 100,
     } = req.query;
 
-    const where = {};
+    const where = { createdBy: req.userId };
     if (status) where.status = status;
     if (priority) where.priority = priority;
     if (location) where.location = new RegExp(location, "i");
@@ -27,7 +26,7 @@ export async function getAllJobs(req, res) {
         { location: q },
         { stage: q },
         { details: q },
-        { content: q }, 
+        { content: q },
       ];
     }
 
@@ -54,7 +53,7 @@ export async function getAllJobs(req, res) {
 
 export async function getJobById(req, res) {
   try {
-    const job = await Job.findById(req.params.id);
+    const job = await Job.findOne({ _id: req.params.id, createdBy: req.userId });
     if (!job) return res.status(404).json({ message: "Job not found" });
     res.status(200).json(job);
   } catch (error) {
@@ -75,7 +74,7 @@ export async function createJob(req, res) {
       location = "",
       link = "",
       details = "",
-      content, 
+      content,
     } = req.body;
 
     if (!title?.trim()) {
@@ -83,6 +82,7 @@ export async function createJob(req, res) {
     }
 
     const job = await Job.create({
+      createdBy: req.userId,
       title: title.trim(),
       company: company?.trim() ?? "",
       status,
@@ -91,8 +91,8 @@ export async function createJob(req, res) {
       source: source?.trim() ?? "",
       location: location?.trim() ?? "",
       link: link?.trim() ?? "",
-      details: (details ?? content ?? "").trim(), 
-      content: (content ?? details ?? "").trim(), 
+      details: (details ?? content ?? "").trim(),
+      content: (content ?? details ?? "").trim(),
     });
 
     res.status(201).json(job);
@@ -114,7 +114,7 @@ export async function updateJob(req, res) {
       "location",
       "link",
       "details",
-      "content", 
+      "content",
     ];
 
     const patch = {};
@@ -132,10 +132,11 @@ export async function updateJob(req, res) {
       patch.details = patch.content;
     }
 
-    const updatedJob = await Job.findByIdAndUpdate(req.params.id, patch, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedJob = await Job.findOneAndUpdate(
+      { _id: req.params.id, createdBy: req.userId },
+      patch,
+      { new: true, runValidators: true }
+    );
 
     if (!updatedJob) return res.status(404).json({ message: "Job not found" });
     res.status(200).json(updatedJob);
@@ -147,7 +148,7 @@ export async function updateJob(req, res) {
 
 export async function deleteJob(req, res) {
   try {
-    const job = await Job.findByIdAndDelete(req.params.id);
+    const job = await Job.findOneAndDelete({ _id: req.params.id, createdBy: req.userId });
     if (!job) return res.status(404).json({ message: "Job not found" });
     res.status(200).json({ message: "Job deleted successfully" });
   } catch (error) {

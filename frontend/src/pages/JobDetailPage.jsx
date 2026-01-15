@@ -4,8 +4,8 @@ import api from "../lib/axios";
 import toast from "react-hot-toast";
 import { ArrowLeftIcon, LoaderIcon, Trash2Icon } from "lucide-react";
 
-const STATUS_OPTS = ["saved", "applied", "interview", "offer", "rejected"];
-const PRIORITY_OPTS = ["low", "med", "high"];
+const STATUS_OPTS = ["Saved", "Applied", "Interview", "Offer", "Rejected"];
+const PRIORITY_OPTS = ["Low", "Medium", "High"];
 
 const JobDetailPage = () => {
   const [job, setJob] = useState(null);
@@ -33,7 +33,7 @@ const JobDetailPage = () => {
       } catch (error) {
         console.log("Error in fetching job", error);
         toast.error("Failed to fetch the job");
-        navigate("/");
+        navigate("/app");
       } finally {
         setLoading(false);
       }
@@ -87,7 +87,7 @@ const JobDetailPage = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-6">
-            <Link to="/" className="btn btn-ghost">
+            <Link to="/app" className="btn btn-ghost">
               <ArrowLeftIcon className="h-5 w-5" />
               Back to Jobs
             </Link>

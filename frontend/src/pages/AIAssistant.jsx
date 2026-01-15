@@ -23,48 +23,42 @@ export default function AIAssistant() {
     localStorage.removeItem("aiPrefill");
   }, []);
 
-  const onUploadPDF = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.type !== "application/pdf") {
-      toast.error("Please upload a PDF");
-      e.target.value = "";
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("PDF too large (max 5MB)");
-      e.target.value = "";
-      return;
-    }
+ const onUploadPDF = async (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  if (file.type !== "application/pdf") {
+    toast.error("Please upload a PDF");
+    e.target.value = "";
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    toast.error("PDF too large (max 5MB)");
+    e.target.value = "";
+    return;
+  }
 
-    setUploading(true);
-    setFileName(file.name);
-    setOutput("");
-    try {
-      const form = new FormData();
-      form.append("file", file);
+  setUploading(true);
+  setFileName(file.name);
+  setOutput("");
+  try {
+    const form = new FormData();
+    form.append("file", file);
 
-      const res = await fetch("http://localhost:5001/api/uploads/resume", {
-        method: "POST",
-        body: form,
-      });
+    const { data } = await api.post("/uploads/resume", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
-      if (!res.ok) {
-        const { message } = await res.json().catch(() => ({ message: "Upload failed" }));
-        throw new Error(message || "Upload failed");
-      }
-
-      const data = await res.json();
-      setResumeText(data.text || "");
-      toast.success("Resume text extracted");
-    } catch (err) {
-      toast.error(err.message || "Failed to read PDF");
-      setFileName("");
-    } finally {
-      setUploading(false);
-      e.target.value = "";
-    }
-  };
+    setResumeText(data.text || "");
+    toast.success("Resume text extracted");
+  } catch (err) {
+    const msg = err?.response?.data?.message || "Upload failed";
+    toast.error(msg);
+    setFileName("");
+  } finally {
+    setUploading(false);
+    e.target.value = "";
+  }
+};
 
   const onGenerate = async () => {
     if (!resumeText.trim()) {
@@ -99,11 +93,13 @@ export default function AIAssistant() {
     <div className="min-h-screen bg-base-200">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-4 flex items-center justify-between">
-          <Link to="/" className="btn btn-ghost">
+          <Link to="/app" className="btn btn-ghost">
             <ArrowLeftIcon className="size-5" />
             Back to Applications
           </Link>
-          <div className="text-sm opacity-70">Mode: <span className="font-semibold">Resume Review</span></div>
+          <div className="text-sm opacity-70">
+            Mode: <span className="font-semibold">Resume Review</span>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-4">

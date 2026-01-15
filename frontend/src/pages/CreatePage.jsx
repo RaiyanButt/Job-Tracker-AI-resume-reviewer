@@ -4,15 +4,15 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router";
 import api from "../lib/axios";
 
-const STATUS_OPTS = ["saved", "applied", "interview", "offer", "rejected"];
-const PRIORITY_OPTS = ["low", "med", "high"];
+const STATUS_OPTS = ["Saved", "Applied", "Interview", "Offer", "Rejected"];
+const PRIORITY_OPTS = ["Low", "Medium", "High"];
 
 const CreatePage = () => {
   const [form, setForm] = useState({
     title: "",
     company: "",
-    status: "saved",
-    priority: "med",
+    status: "Saved",
+    priority: "Medium",
     stage: "",
     source: "",
     location: "",
@@ -36,7 +36,7 @@ const CreatePage = () => {
       const payload = { ...form, content: form.details };
       await api.post("/jobs", payload);
       toast.success("Application added successfully!");
-      navigate("/");
+      navigate("/app");
     } catch (error) {
       if (error?.response?.status === 429) {
         toast.error("Slow down! You're adding applications too fast", { duration: 4000, icon: "💀" });
@@ -52,7 +52,7 @@ const CreatePage = () => {
     <div className="min-h-screen bg-base-200">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Link to={"/"} className="btn btn-ghost mb-6">
+          <Link to={"/app"} className="btn btn-ghost mb-6">
             <ArrowLeftIcon className="size-5" />
             Back to Applications
           </Link>

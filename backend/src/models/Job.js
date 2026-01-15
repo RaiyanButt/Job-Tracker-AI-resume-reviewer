@@ -5,6 +5,13 @@ const JobSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true },
     company: { type: String, trim: true, default: "" },
 
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
+
     status: {
       type: String,
       enum: ["saved", "applied", "interview", "offer", "rejected"],
