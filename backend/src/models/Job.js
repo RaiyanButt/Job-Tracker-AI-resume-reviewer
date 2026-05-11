@@ -14,23 +14,23 @@ const JobSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["saved", "applied", "interview", "offer", "rejected"],
-      default: "saved",
+      enum: ["Saved", "Applied", "Interview", "Offer", "Rejected"],
+      default: "Saved",
       index: true,
     },
     priority: {
       type: String,
-      enum: ["low", "med", "high"],
-      default: "med",
+      enum: ["Low", "Medium", "High"],
+      default: "Low",
       index: true,
     },
 
-    stage: { type: String, trim: true, default: "" },     
-    source: { type: String, trim: true, default: "" },    
+    stage: { type: String, trim: true, default: "" },
+    source: { type: String, trim: true, default: "" },
     location: { type: String, trim: true, default: "" },
     link: { type: String, trim: true, default: "" },
 
-    details: { type: String, trim: true, default: "" },   
+    details: { type: String, trim: true, default: "" },
     content: { type: String, trim: true, default: "" },
   },
   { timestamps: true }
